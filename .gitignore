@@ -152,3 +152,9 @@ obj/
 *.userosscache
 *.sln.docstates
 .vs/
+
+# Rust
+debug/
+target/
+**/*.rs.bk
+Cargo.lock
