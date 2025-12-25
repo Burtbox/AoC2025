@@ -3,41 +3,49 @@ use std::fs;
 fn solve(input: String) -> i32 {
     println!("Processing: {:?}", input);
 
-    let first_line = input.lines().nth(0).unwrap();
+    let mut acc = 0;
 
-    let vector_of_ints: Vec<i32> = first_line
+    //let first_line = input.lines().nth(0).unwrap();
+
+    for line in input.lines() {
+        let vector_of_ints: Vec<i32> = line
         .chars()
         .filter_map(|c| c.to_digit(10))
         .map(|d| d as i32)
         .collect();
-
-    let trimmed = &vector_of_ints[..vector_of_ints.len() - 1];
-
-    println!("Digits: {:?}", trimmed);
         
-    let (idx, &largest) = vector_of_ints
-    .iter()
-    .enumerate()
-    .max_by_key(|&(_, v)| v)
-    .unwrap();
+        let trimmed = &vector_of_ints[..vector_of_ints.len() - 1];
+        
+        println!("Digits: {:?}", trimmed);
+        
+        let (idx, &largest) = trimmed
+        .iter()
+        .enumerate().rev()
+        .max_by_key(|&(_, v)| v)
+        .unwrap();
+        
+        println!("With largest num: {largest} at {idx}");  
+        
+        let right_ints = &vector_of_ints[idx + 1..];
+        
+        println!("right ints {:?}", right_ints);
+        
+        let second_largest = right_ints.iter().max().unwrap();
+        
+        println!("With second largest num: {second_largest}"); 
+        
+        let add_on = largest * 10 + second_largest;
+        
+        println!("comibned largest num: {add_on}"); 
 
-    println!("With largest num: {largest} at {idx}");  
+        acc += add_on
+    }
 
-    let right_ints = &vector_of_ints[idx + 1..];
-
-    println!("right ints {:?}", right_ints);
-
-    let second_largest = right_ints.iter().max().unwrap();
-
-    println!("With second largest num: {second_largest}");  
-
-
-    largest * 10 + second_largest
+    acc
 }
 
 fn main() {
-
-    let file_path = "./exampleIn.txt";
+    let file_path = "./input.txt";
     println!("In file {file_path}");
 
     let contents = fs::read_to_string(file_path)
