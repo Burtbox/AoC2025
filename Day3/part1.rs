@@ -1,9 +1,38 @@
 use std::fs;
 
-fn solve(input: u64) -> u64 {
-    // TODO: implement your solution
-    println!("Processing: {}", input);
-    98 // placeholder
+fn solve(input: String) -> i32 {
+    println!("Processing: {:?}", input);
+
+    let first_line = input.lines().nth(0).unwrap();
+
+    let vector_of_ints: Vec<i32> = first_line
+        .chars()
+        .filter_map(|c| c.to_digit(10))
+        .map(|d| d as i32)
+        .collect();
+
+    let trimmed = &vector_of_ints[..vector_of_ints.len() - 1];
+
+    println!("Digits: {:?}", trimmed);
+        
+    let (idx, &largest) = vector_of_ints
+    .iter()
+    .enumerate()
+    .max_by_key(|&(_, v)| v)
+    .unwrap();
+
+    println!("With largest num: {largest} at {idx}");  
+
+    let right_ints = &vector_of_ints[idx + 1..];
+
+    println!("right ints {:?}", right_ints);
+
+    let second_largest = right_ints.iter().max().unwrap();
+
+    println!("With second largest num: {second_largest}");  
+
+
+    largest * 10 + second_largest
 }
 
 fn main() {
@@ -14,9 +43,9 @@ fn main() {
     let contents = fs::read_to_string(file_path)
         .expect("Should have been able to read the file");
 
-    println!("With text:\n{contents}");
+    // println!("With text:\n{contents}");
 
-    let result = solve(987654321111111);
+    let result = solve(contents);
     println!("Result: {}", result);
 }
 
@@ -25,26 +54,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_worksA() {
-        let result = solve(987654321111111);
+    fn it_works_a() {
+        let result = solve("987654321111111".to_string());
         assert_eq!(result, 98);
     }
 
         #[test]
-    fn it_worksB() {
-        let result = solve(811111111111119);
+    fn it_works_b() {
+        let result = solve("811111111111119".to_string());
         assert_eq!(result, 89);
     }
 
         #[test]
-    fn it_worksC() {
-        let result = solve(234234234234278);
+    fn it_works_c() {
+        let result = solve("234234234234278".to_string());
         assert_eq!(result, 78);
     }
 
         #[test]
-    fn it_worksD() {
-        let result = solve(818181911112111);
+    fn it_works_d() {
+        let result = solve("818181911112111".to_string());
         assert_eq!(result, 92);
     }
 }
