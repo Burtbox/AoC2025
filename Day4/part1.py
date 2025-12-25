@@ -18,9 +18,8 @@ headers = {
     "Cookie": f"session={os.getenv('SESSION_COOKIE')}"
 }
 request = req.Request("https://adventofcode.com/2025/day/4/input", headers=headers)
-contents = req.urlopen(request, context=ssl_context).read()
-# print(contents)
-f = open("exampleInput.txt")
+contents = req.urlopen(request, context=ssl_context).read().decode('utf-8')
+# f = open("exampleInput.txt")
 
 def part1(puzzle_input):
     grid = np.array(
@@ -40,6 +39,8 @@ def part1(puzzle_input):
     )
     return int((grid & (neighbors < 4)).sum())
 
+# print(part1(f.read()))
+
 print(part1(contents))
 
-f.close()
+# f.close()
