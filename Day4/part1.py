@@ -1,16 +1,28 @@
+import numpy as np
+
 roll = '@'
 empty_space = '.'
 
 f = open("exampleInput.txt")
 
-line = f.readline()
+def part1(puzzle_input):
+    grid = np.array(
+        [[char == roll for char in line] for line in puzzle_input.splitlines()], 
+        dtype=np.uint8
+    )
+    padded = np.pad(grid, 1)
+    neighbors = (
+        padded[:-2, :-2] +  # up-left
+        padded[:-2, 1:-1] + # up
+        padded[:-2, 2:] +   # up-right
+        padded[1:-1, :-2] + # left
+        padded[1:-1, 2:] +  # right
+        padded[2:, :-2] +   # down-left
+        padded[2:, 1:-1] +  # down
+        padded[2:, 2:]      # down-right
+    )
+    return int((grid & (neighbors < 4)).sum())
 
-count_of_rolls = line.count(roll)
-
-print("r", count_of_rolls)
-
-count_of_spaces = line.count(empty_space)
-
-print("s", count_of_spaces)
+print(part1(f.read()))
 
 f.close()
