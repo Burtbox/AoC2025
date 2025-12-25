@@ -1,44 +1,27 @@
-use reqwest::Error;
+use std::fs;
 
-fn solve(input: String) -> i32 {
-    println!("Processing: {:?}", input);
+fn solve(input: String) -> i64 {
+    // println!("Processing: {:?}", input);
 
     let mut acc = 0;
-
-    //let first_line = input.lines().nth(0).unwrap();
-
+    
     for line in input.lines() {
-        let vector_of_ints: Vec<i32> = line
+
+        let vector_of_ints: Vec<i64> = line
         .chars()
         .filter_map(|c| c.to_digit(10))
-        .map(|d| d as i32)
+        .map(|d| d as i64)
         .collect();
         
-        let trimmed = &vector_of_ints[..vector_of_ints.len() - 1];
+        let mut start = 0;
         
-        println!("Digits: {:?}", trimmed);
-        
-        let (idx, &largest) = trimmed
-        .iter()
-        .enumerate().rev()
-        .max_by_key(|&(_, v)| v)
-        .unwrap();
-        
-        println!("With largest num: {largest} at {idx}");  
-        
-        let right_ints = &vector_of_ints[idx + 1..];
-        
-        println!("right ints {:?}", right_ints);
-        
-        let second_largest = right_ints.iter().max().unwrap();
-        
-        println!("With second largest num: {second_largest}"); 
-        
-        let add_on = largest * 10 + second_largest;
-        
-        println!("comibned largest num: {add_on}"); 
+        for digit in 0..12 {
+            let limit = 11 - digit;
+            let Some((pos, &next_digit)) = vector_of_ints[start..vector_of_ints.len() - limit].to_vec().iter().enumerate().rev().max_by(|a,b| a.1.cmp(b.1)) else { panic!("bad times friend") };
 
-        acc += add_on
+            start += pos+1;
+            acc = acc * 10 + next_digit; 
+        }
     }
 
     acc
@@ -71,24 +54,24 @@ mod tests {
     #[test]
     fn it_works_a() {
         let result = solve("987654321111111".to_string());
-        assert_eq!(result, 98);
+        assert_eq!(result, 987654321111);
     }
 
         #[test]
     fn it_works_b() {
         let result = solve("811111111111119".to_string());
-        assert_eq!(result, 89);
+        assert_eq!(result, 811111111119);
     }
 
         #[test]
     fn it_works_c() {
         let result = solve("234234234234278".to_string());
-        assert_eq!(result, 78);
+        assert_eq!(result, 434234234278);
     }
 
         #[test]
     fn it_works_d() {
         let result = solve("818181911112111".to_string());
-        assert_eq!(result, 92);
+        assert_eq!(result, 888911112111);
     }
 }
