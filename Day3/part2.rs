@@ -44,16 +44,23 @@ fn solve(input: String) -> i32 {
     acc
 }
 
-fn fetch_input() -> String {
-    let resp = reqwest::get("https://adventofcode.com/2025/day/3/input").await?;
-    let body = resp.text().await?;
-    println!("{body}");
-    body
-}
+// fn fetch_input() -> String {
+//     let resp = reqwest::get("https://adventofcode.com/2025/day/3/input").await?;
+//     let body = resp.text().await?;
+//     println!("{body}");
+//     body
+// }
 
 fn main() {
-    let input = fetch_input();
-    let result = solve(input);
+    let file_path = "./input.txt";
+    println!("In file {file_path}");
+
+    let contents = fs::read_to_string(file_path)
+        .expect("Should have been able to read the file");
+
+    // println!("With text:\n{contents}");
+
+    let result = solve(contents);
     println!("Result: {}", result);
 }
     
