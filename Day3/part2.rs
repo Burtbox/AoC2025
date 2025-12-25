@@ -1,30 +1,29 @@
 use std::fs;
+use std::mem::replace;
 
-fn solve(input: String) -> i64 {
-    // println!("Processing: {:?}", input);
+fn solve<const N: usize>(input: &[&str]) -> u64 {
+    let mut batteries = [0; N];
 
-    let mut acc = 0;
-    
-    for line in input.lines() {
+    input
+        .iter()
+        .map(|&bank| {
+            // Start with enough batteries to make the bank, taken from the right of the input.
+            let end = bank.len() - N;
+            batteries.copy_from_slice(&bank.as_bytes()[end..]);
 
-        let vector_of_ints: Vec<i64> = line
-        .chars()
-        .filter_map(|c| c.to_digit(10))
-        .map(|d| d as i64)
-        .collect();
-        
-        let mut start = 0;
-        
-        for digit in 0..12 {
-            let limit = 11 - digit;
-            let Some((pos, &next_digit)) = vector_of_ints[start..vector_of_ints.len() - limit].to_vec().iter().enumerate().rev().max_by(|a,b| a.1.cmp(b.1)) else { panic!("bad times friend") };
+            // Scan from right to left, bubbling up any battery greater than the start of the bank.
+            for mut next in bank[..end].bytes().rev() {
+                for battery in &mut batteries {
+                    if next < *battery {
+                        break;
+                    }
+                    next = replace(battery, next);
+                }
+            }
 
-            start += pos+1;
-            acc = acc * 10 + next_digit; 
-        }
-    }
-
-    acc
+            batteries.iter().fold(0, |joltage, &b| 10 * joltage + (b - b'0') as u64)
+        })
+        .sum()
 }
 
 // fn fetch_input() -> String {
@@ -43,7 +42,9 @@ fn main() {
 
     // println!("With text:\n{contents}");
 
-    let result = solve(contents);
+    let lines: Vec<_> = contents.lines().collect();
+
+    let result = solve::<12>(&lines);
     println!("Result: {}", result);
 }
     
@@ -53,25 +54,25 @@ mod tests {
 
     #[test]
     fn it_works_a() {
-        let result = solve("987654321111111".to_string());
+        let result = solve::<12>(&["987654321111111"]);
         assert_eq!(result, 987654321111);
     }
 
         #[test]
     fn it_works_b() {
-        let result = solve("811111111111119".to_string());
+        let result = solve::<12>(&["811111111111119"]);
         assert_eq!(result, 811111111119);
     }
 
         #[test]
     fn it_works_c() {
-        let result = solve("234234234234278".to_string());
+        let result = solve::<12>(&["234234234234278"]);
         assert_eq!(result, 434234234278);
     }
 
         #[test]
     fn it_works_d() {
-        let result = solve("818181911112111".to_string());
+        let result = solve::<12>(&["818181911112111"]);
         assert_eq!(result, 888911112111);
     }
 }
